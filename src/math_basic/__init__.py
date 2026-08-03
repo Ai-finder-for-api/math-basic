@@ -1,3 +1,3 @@
-from .qmath import Vec4
+from .qmath import Vec4, ComplexMatrix, QuantumState
 
-__all__ = ["Vec4"]
+__all__ = ["Vec4", "ComplexMatrix", "QuantumState"]
