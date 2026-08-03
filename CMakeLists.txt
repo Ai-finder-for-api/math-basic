@@ -13,14 +13,18 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(pybind11)
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64|amd64|AMD64|i386|i686)")
-    add_compile_options(-msse4.2 -O3)
+    # Enable AVX, AVX2, SSE4.2, and FMA (Fused Multiply-Add)
+    add_compile_options(-mavx -mavx2 -msse4.2 -mfma -O3)
 else()
     add_compile_options(-O3)
 endif()
 
 pybind11_add_module(qmath 
     src/math_basic/vector.cpp
+    src/math_basic/matrix.cpp
 )
 
-# The magic fix: Tell CMake to install the compiled extension into the math_basic package folder
+# Add the math_basic directory to the include path so .cpp files can find .hpp files
+target_include_directories(qmath PRIVATE src/math_basic)
+
 install(TARGETS qmath DESTINATION math_basic)
