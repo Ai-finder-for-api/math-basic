@@ -18,7 +18,9 @@ else()
     add_compile_options(-O3)
 endif()
 
-# Notice the dot in the name below! This tells pybind11 to put it inside the math_basic folder.
-pybind11_add_module(math_basic.qmath 
+pybind11_add_module(qmath 
     src/math_basic/vector.cpp
 )
+
+# The magic fix: Tell CMake to install the compiled extension into the math_basic package folder
+install(TARGETS qmath DESTINATION math_basic)
