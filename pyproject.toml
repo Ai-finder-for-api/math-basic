@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "math-basic"
-version = "0.4.1"
+version = "0.4.2"
 description = "Deep-architecture SIMD math library to rival NumPy"
 requires-python = ">=3.9"
 

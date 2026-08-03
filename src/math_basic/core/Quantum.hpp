@@ -11,7 +11,8 @@ public:
     }
 
     void apply_gate(const ComplexMatrix& gate, int target_qubit, int num_qubits) {
-        state = state.multiply(gate);
+        // Fix: Must be gate * state (2x2 * 2x1 = 2x1), not state * gate
+        state = gate.multiply(state);
     }
 
     ComplexMatrix& get_state() { return state; }
