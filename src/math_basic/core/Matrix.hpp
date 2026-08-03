@@ -2,7 +2,9 @@
 #include "Complex.hpp"
 #include "Allocator.hpp"
 #include <vector>
+#include <stdexcept>
 #include <pybind11/pybind11.h>
+#include <pybind11/buffer_info.h>
 
 namespace py = pybind11;
 

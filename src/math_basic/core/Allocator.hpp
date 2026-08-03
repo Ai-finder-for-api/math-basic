@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdlib>
+#include <stdlib.h>
 #include <new>
 
 template <typename T>
@@ -12,7 +13,7 @@ public:
         #if defined(_MSC_VER)
             p = _aligned_malloc(n * sizeof(T), 32);
         #else
-            posix_memalign(&p, 32, n * sizeof(T));
+            if (posix_memalign(&p, 32, n * sizeof(T)) != 0) p = nullptr;
         #endif
         if (!p) throw std::bad_alloc();
         return static_cast<T*>(p);
@@ -25,3 +26,8 @@ public:
         #endif
     }
 };
+
+template <typename T, typename U>
+bool operator==(const AlignedAllocator<T>&, const AlignedAllocator<U>&) noexcept { return true; }
+template <typename T, typename U>
+bool operator!=(const AlignedAllocator<T>&, const AlignedAllocator<U>&) noexcept { return false; }

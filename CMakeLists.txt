@@ -13,7 +13,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(pybind11)
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64|amd64|AMD64|i386|i686)")
-    add_compile_options(-mavx -mavx2 -msse4.2 -mfma -O3)
+    add_compile_options(-msse4.2 -O3)
 else()
     add_compile_options(-O3)
 endif()
