@@ -4,7 +4,6 @@ project(qmath LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Fetch pybind11 automatically
 include(FetchContent)
 FetchContent_Declare(
     pybind11
@@ -13,11 +12,20 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(pybind11)
 
-# Use standard SSE4.2 (Safe for GitHub Actions runners)
-add_compile_options(-msse4.2 -O3)
-# Note: If you are on an older CPU that doesn't support SSE4.2, remove the line above temporarily.
+# Apply SSE4.2 ONLY on x86_64 (Intel/AMD). 
+# This prevents macOS Apple Silicon (ARM64) from crashing!
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64|amd64|AMD64|i386|i686)")
+    add_compile_options(-msse4.2 -O3)
+else()
+    add_compile_options(-O3)
+endif()
 
-# Point to the correct C++ file location
 pybind11_add_module(qmath 
-    src/vector.cpp
+    src/math_basic/vector.cpp
+)
+
+# CRITICAL: Tell CMake to put the compiled .so/.pyd inside the math_basic package folder
+set_target_properties(qmath PROPERTIES 
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/math_basic"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/math_basic"
 )
