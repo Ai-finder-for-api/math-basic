@@ -12,20 +12,13 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(pybind11)
 
-# Apply SSE4.2 ONLY on x86_64 (Intel/AMD). 
-# This prevents macOS Apple Silicon (ARM64) from crashing!
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64|amd64|AMD64|i386|i686)")
     add_compile_options(-msse4.2 -O3)
 else()
     add_compile_options(-O3)
 endif()
 
-pybind11_add_module(qmath 
+# Notice the dot in the name below! This tells pybind11 to put it inside the math_basic folder.
+pybind11_add_module(math_basic.qmath 
     src/math_basic/vector.cpp
-)
-
-# CRITICAL: Tell CMake to put the compiled .so/.pyd inside the math_basic package folder
-set_target_properties(qmath PROPERTIES 
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/math_basic"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/math_basic"
 )
