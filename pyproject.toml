@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "math-basic"
-version = "1.1.8"
+version = "1.1.9"
 description = "Deep-architecture math library featuring ML, Physics, Geometry, DSP, and Compression"
 requires-python = ">=3.9"
 
