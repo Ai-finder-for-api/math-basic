@@ -6,6 +6,7 @@
  * is available to guide the search.
  */
 #pragma once
+#include <utility>
 #include "Graph.hpp"
 #include "Dijkstra.hpp"
 #include "../3d/Vec3.hpp"

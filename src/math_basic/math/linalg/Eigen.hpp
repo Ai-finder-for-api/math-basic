@@ -6,6 +6,7 @@
  * Crucial for Principal Component Analysis (PCA) and physics simulations.
  */
 #pragma once
+#include <utility>
 #include "Matrix.hpp"
 #include "../core/Utils.hpp"
 #include <cmath>

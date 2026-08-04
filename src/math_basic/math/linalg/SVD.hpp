@@ -6,6 +6,7 @@
  * Highly accurate and efficient for small to medium matrices.
  */
 #pragma once
+#include <utility>
 #include "Matrix.hpp"
 #include "../core/Utils.hpp"
 #include <cmath>

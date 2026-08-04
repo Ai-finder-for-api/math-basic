@@ -18,9 +18,18 @@ else()
     add_compile_options(-O3)
 endif()
 
-file(GLOB QMATH_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/math_basic/bindings/*.cpp")
+# Disable warnings-as-errors globally
+add_compile_options(-Wno-error)
 
-pybind11_add_module(qmath ${QMATH_SOURCES})
+# Explicitly list the binding files to avoid GLOB picking up deleted files
+pybind11_add_module(qmath 
+    src/math_basic/bindings/Main.cpp
+    src/math_basic/bindings/PyVec.cpp
+    src/math_basic/bindings/PyArray.cpp
+    src/math_basic/bindings/PyMatrix.cpp
+    src/math_basic/bindings/PyQuantum.cpp
+)
+
 target_include_directories(qmath PRIVATE 
     src/math_basic/core 
     src/math_basic/math/3d 

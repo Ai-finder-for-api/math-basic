@@ -9,6 +9,7 @@
 #include <functional>
 #include <algorithm>
 #include <cmath>
+#include <type_traits>
 
 namespace qmath {
 

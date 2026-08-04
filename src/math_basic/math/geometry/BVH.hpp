@@ -6,6 +6,7 @@
  * O(log(N)) ray-mesh intersection tests instead of O(N).
  */
 #pragma once
+#include <utility>
 #include "../3d/AABB.hpp"
 #include "../3d/Ray.hpp"
 #include "RayTriangle.hpp"
