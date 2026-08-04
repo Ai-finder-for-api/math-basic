@@ -7,12 +7,11 @@
 #include <initializer_list>
 #include <numeric>
 #include <functional>
+#include <algorithm>
+#include <cmath>
 
 namespace qmath {
 
-// =========================================================
-// Shape and Stride Utilities
-// =========================================================
 using Shape = std::vector<size_t>;
 using Strides = std::vector<size_t>;
 
@@ -33,9 +32,6 @@ inline Strides compute_strides(const Shape& shape, size_t itemsize) {
     return strides;
 }
 
-// =========================================================
-// NdArray Core Engine (N-Dimensional)
-// =========================================================
 template <typename T>
 class NdArray {
 private:
@@ -44,7 +40,6 @@ private:
     std::vector<T, AlignedAllocator<T>> data_;
 
 public:
-    // Constructors
     NdArray() = default;
     NdArray(const Shape& shape) : shape_(shape), strides_(compute_strides(shape, sizeof(T))), data_(compute_size(shape)) {}
     
@@ -56,7 +51,6 @@ public:
         if (data_.size() != compute_size(shape)) throw std::runtime_error("Data size mismatch");
     }
 
-    // Accessors
     const Shape& shape() const { return shape_; }
     const Strides& strides() const { return strides_; }
     size_t ndim() const { return shape_.size(); }
@@ -64,11 +58,9 @@ public:
     T* data() { return data_.data(); }
     const T* data() const { return data_.data(); }
 
-    // Raw 1D Access
     T& operator[](size_t i) { return data_[i]; }
     const T& operator[](size_t i) const { return data_[i]; }
 
-    // N-Dimensional Flat Index Calculation
     size_t flat_index(const std::vector<size_t>& indices) const {
         if (indices.size() != ndim()) throw std::runtime_error("Dimension mismatch");
         size_t idx = 0;
@@ -79,11 +71,9 @@ public:
         return idx / sizeof(T);
     }
 
-    // N-Dimensional Access
     T& at(const std::vector<size_t>& indices) { return data_[flat_index(indices)]; }
     const T& at(const std::vector<size_t>& indices) const { return data_[flat_index(indices)]; }
 
-    // Reshape
     NdArray reshape(const Shape& new_shape) const {
         if (compute_size(new_shape) != size()) throw std::runtime_error("Cannot reshape size mismatch");
         NdArray result(new_shape);
@@ -91,7 +81,6 @@ public:
         return result;
     }
 
-    // Transpose (2D specialization for simplicity in this core)
     NdArray transpose() const {
         if (ndim() != 2) throw std::runtime_error("Transpose currently supports 2D only");
         Shape new_shape = {shape_[1], shape_[0]};
@@ -104,12 +93,12 @@ public:
         return result;
     }
 
-    // Element-wise Universal Functions (UFuncs) - SIMD Accelerated for float
+    // SIMD Accelerated addition (x86 only, fallback for ARM)
     NdArray operator+(const NdArray& other) const {
         if (shape_ != other.shape_) throw std::runtime_error("Shape mismatch for element-wise add");
         NdArray result(shape_);
         
-        // SIMD Fast Path for float
+        #if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || defined(_M_IX86)
         if constexpr (std::is_same_v<T, float>) {
             size_t i = 0;
             for (; i + 4 <= size(); i += 4) {
@@ -121,6 +110,9 @@ public:
         } else {
             for (size_t i = 0; i < size(); ++i) result.data_[i] = data_[i] + other.data_[i];
         }
+        #else
+        for (size_t i = 0; i < size(); ++i) result.data_[i] = data_[i] + other.data_[i];
+        #endif
         return result;
     }
 
@@ -128,6 +120,7 @@ public:
         if (shape_ != other.shape_) throw std::runtime_error("Shape mismatch for element-wise mul");
         NdArray result(shape_);
         
+        #if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || defined(_M_IX86)
         if constexpr (std::is_same_v<T, float>) {
             size_t i = 0;
             for (; i + 4 <= size(); i += 4) {
@@ -139,12 +132,15 @@ public:
         } else {
             for (size_t i = 0; i < size(); ++i) result.data_[i] = data_[i] * other.data_[i];
         }
+        #else
+        for (size_t i = 0; i < size(); ++i) result.data_[i] = data_[i] * other.data_[i];
+        #endif
         return result;
     }
 
-    // Scalar operations
     NdArray operator+(T scalar) const {
         NdArray result(shape_);
+        #if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || defined(_M_IX86)
         if constexpr (std::is_same_v<T, float>) {
             __m128 s = _mm_set1_ps(scalar);
             size_t i = 0;
@@ -155,10 +151,12 @@ public:
         } else {
             for (size_t i = 0; i < size(); ++i) result.data_[i] = data_[i] + scalar;
         }
+        #else
+        for (size_t i = 0; i < size(); ++i) result.data_[i] = data_[i] + scalar;
+        #endif
         return result;
     }
 
-    // Matrix Multiplication (2D)
     NdArray matmul(const NdArray& other) const {
         if (ndim() != 2 || other.ndim() != 2 || shape_[1] != other.shape_[0])
             throw std::runtime_error("Matmul dimension mismatch");
@@ -178,7 +176,6 @@ public:
         return result;
     }
 
-    // Reductions
     T sum() const {
         T s = 0;
         for (size_t i = 0; i < size(); ++i) s += data_[i];
@@ -199,7 +196,6 @@ public:
         return m;
     }
 
-    // Buffer Protocol Support for Python
     py::buffer_info get_buffer_info() {
         return py::buffer_info(
             data_.data(), sizeof(T), py::format_descriptor<T>::format(),
@@ -208,9 +204,6 @@ public:
     }
 };
 
-// =========================================================
-// Universal Math Functions (UFuncs)
-// =========================================================
 template<typename T>
 NdArray<T> sin(const NdArray<T>& arr) {
     NdArray<T> result(arr.shape());
