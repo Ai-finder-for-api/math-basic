@@ -4,8 +4,8 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "math-basic"
-version = "1.0.0"
-description = "NumPy Killer: 100-file deep architecture with N-Dimensional arrays, 3D, Color, and Quantum math"
+version = "1.0.1"
+description = "High-performance SIMD-accelerated math library featuring N-Dimensional arrays, 3D math, color spaces, and quantum computing simulations."
 requires-python = ">=3.9"
 
 [tool.scikit-build]
