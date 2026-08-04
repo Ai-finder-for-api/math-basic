@@ -139,6 +139,16 @@ public:
         return result;
     }
 
+    NdArray operator*(T scalar) const {
+        NdArray result(shape_);
+        for (size_t i = 0; i < size(); ++i) result.data_[i] = data_[i] * scalar;
+        return result;
+    }
+
+    friend NdArray operator*(T scalar, const NdArray& arr) {
+        return arr * scalar;
+    }
+
     NdArray operator+(T scalar) const {
         NdArray result(shape_);
         #if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || defined(_M_IX86)

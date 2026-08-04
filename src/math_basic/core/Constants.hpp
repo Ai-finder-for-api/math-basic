@@ -1,19 +1,14 @@
 /**
  * @file Constants.hpp
  * @brief Comprehensive definitions of mathematical constants and enumerations.
- * 
- * This file provides high-precision mathematical constants for float, double,
- * and long double types. It also defines common angle modes and axis enumerations
- * used throughout the math_basic library.
  */
 #pragma once
 #include <limits>
+#include "math/3d/Vec3.hpp"
+#include "math/3d/Vec4.hpp"
 
 namespace qmath {
 
-// -----------------------------------------------------------------
-// Mathematical Constants (Float)
-// -----------------------------------------------------------------
 constexpr float PI_F = 3.14159265358979323846f;
 constexpr float TWO_PI_F = 2.0f * PI_F;
 constexpr float HALF_PI_F = 0.5f * PI_F;
@@ -29,9 +24,6 @@ constexpr float NEG_INFINITY_F = -std::numeric_limits<float>::infinity();
 constexpr float DEG_TO_RAD_F = PI_F / 180.0f;
 constexpr float RAD_TO_DEG_F = 180.0f / PI_F;
 
-// -----------------------------------------------------------------
-// Mathematical Constants (Double)
-// -----------------------------------------------------------------
 constexpr double PI_D = 3.14159265358979323846;
 constexpr double TWO_PI_D = 2.0 * PI_D;
 constexpr double HALF_PI_D = 0.5 * PI_D;
@@ -47,47 +39,23 @@ constexpr double NEG_INFINITY_D = -std::numeric_limits<double>::infinity();
 constexpr double DEG_TO_RAD_D = PI_D / 180.0;
 constexpr double RAD_TO_DEG_D = 180.0 / PI_D;
 
-// -----------------------------------------------------------------
-// Angle Modes
-// -----------------------------------------------------------------
-enum class AngleMode {
-    RADIANS,
-    DEGREES
-};
-
-// -----------------------------------------------------------------
-// Axis Enumerations (for 3D Math)
-// -----------------------------------------------------------------
-enum class Axis {
-    X = 0,
-    Y = 1,
-    Z = 2,
-    W = 3
-};
-
-// -----------------------------------------------------------------
-// Common 3D Vectors (Forward declaration of struct for constants)
-// -----------------------------------------------------------------
-template<typename T>
-struct Vec3;
-template<typename T>
-struct Vec4;
+enum class AngleMode { RADIANS, DEGREES };
+enum class Axis { X = 0, Y = 1, Z = 2, W = 3 };
 
 namespace vectors {
-    // Standard basis vectors (float)
-    constexpr Vec3<float> ZERO_3D_F = {0.0f, 0.0f, 0.0f};
-    constexpr Vec3<float> UNIT_X_F = {1.0f, 0.0f, 0.0f};
-    constexpr Vec3<float> UNIT_Y_F = {0.0f, 1.0f, 0.0f};
-    constexpr Vec3<float> UNIT_Z_F = {0.0f, 0.0f, 1.0f};
-    constexpr Vec3<float> FORWARD_F = {0.0f, 0.0f, -1.0f};
-    constexpr Vec3<float> BACKWARD_F = {0.0f, 0.0f, 1.0f};
-    constexpr Vec3<float> LEFT_F = {-1.0f, 0.0f, 0.0f};
-    constexpr Vec3<float> RIGHT_F = {1.0f, 0.0f, 0.0f};
-    constexpr Vec3<float> UP_F = {0.0f, 1.0f, 0.0f};
-    constexpr Vec3<float> DOWN_F = {0.0f, -1.0f, 0.0f};
+    inline const Vec3<float> ZERO_3D_F = {0.0f, 0.0f, 0.0f};
+    inline const Vec3<float> UNIT_X_F = {1.0f, 0.0f, 0.0f};
+    inline const Vec3<float> UNIT_Y_F = {0.0f, 1.0f, 0.0f};
+    inline const Vec3<float> UNIT_Z_F = {0.0f, 0.0f, 1.0f};
+    inline const Vec3<float> FORWARD_F = {0.0f, 0.0f, -1.0f};
+    inline const Vec3<float> BACKWARD_F = {0.0f, 0.0f, 1.0f};
+    inline const Vec3<float> LEFT_F = {-1.0f, 0.0f, 0.0f};
+    inline const Vec3<float> RIGHT_F = {1.0f, 0.0f, 0.0f};
+    inline const Vec3<float> UP_F = {0.0f, 1.0f, 0.0f};
+    inline const Vec3<float> DOWN_F = {0.0f, -1.0f, 0.0f};
 
-    constexpr Vec4<float> ZERO_4D_F = {0.0f, 0.0f, 0.0f, 0.0f};
-    constexpr Vec4<float> UNIT_W_F = {0.0f, 0.0f, 0.0f, 1.0f};
+    inline const Vec4<float> ZERO_4D_F = {0.0f, 0.0f, 0.0f, 0.0f};
+    inline const Vec4<float> UNIT_W_F = {0.0f, 0.0f, 0.0f, 1.0f};
 }
 
 } // namespace qmath
