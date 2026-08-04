@@ -21,5 +21,22 @@ endif()
 file(GLOB QMATH_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/math_basic/bindings/*.cpp")
 
 pybind11_add_module(qmath ${QMATH_SOURCES})
-target_include_directories(qmath PRIVATE src/math_basic/core src/math_basic/math/3d src/math_basic/math/color src/math_basic/math/quantum src/math_basic/math/linalg src/math_basic/math/random)
+target_include_directories(qmath PRIVATE 
+    src/math_basic/core 
+    src/math_basic/math/3d 
+    src/math_basic/math/color 
+    src/math_basic/math/quantum 
+    src/math_basic/math/linalg 
+    src/math_basic/math/random
+    src/math_basic/math/processing
+    src/math_basic/math/stats
+    src/math_basic/math/physics
+    src/math_basic/math/crypto
+    src/math_basic/math/ml
+    src/math_basic/math/geometry
+    src/math_basic/math/procgen
+    src/math_basic/math/ode
+    src/math_basic/math/graph
+    src/math_basic/math/compression
+)
 install(TARGETS qmath DESTINATION math_basic)

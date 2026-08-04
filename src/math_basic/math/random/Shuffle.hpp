@@ -1,2 +1,11 @@
+/**
+ * @file Shuffle.hpp
+ * @brief Explicit interface for array shuffling operations.
+ */
 #pragma once
-// math/random/Shuffle.hpp - Auto-generated stub for architecture expansion
+#include "Choice.hpp"
+
+namespace qmath {
+    // Re-export shuffle from Choice.hpp to maintain module structure
+    using Choice::shuffle;
+}

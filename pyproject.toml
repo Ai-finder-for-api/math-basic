@@ -4,8 +4,8 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "math-basic"
-version = "1.0.1"
-description = "High-performance SIMD-accelerated math library featuring N-Dimensional arrays, 3D math, color spaces, and quantum computing simulations."
+version = "1.1.0"
+description = "Deep-architecture math library featuring ML, Physics, Geometry, DSP, and Compression"
 requires-python = ">=3.9"
 
 [tool.scikit-build]

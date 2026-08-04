@@ -3,13 +3,17 @@
 namespace py = pybind11;
 
 void init_vec(py::module_ &m);
+void init_array(py::module_ &m);
 void init_matrix(py::module_ &m);
 void init_quantum(py::module_ &m);
+void init_fast_math(py::module_ &m);
 
 PYBIND11_MODULE(qmath, m) {
-    m.doc() = "Deep-architecture SIMD math library";
+    m.doc() = "qmath: High-Performance SIMD Math Engine";
     
     init_vec(m);
+    init_array(m);
     init_matrix(m);
     init_quantum(m);
+    init_fast_math(m); // The NumPy Killer
 }
