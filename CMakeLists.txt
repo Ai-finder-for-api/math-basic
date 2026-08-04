@@ -18,10 +18,8 @@ else()
     add_compile_options(-O3)
 endif()
 
-# Disable warnings-as-errors globally
 add_compile_options(-Wno-error)
 
-# Explicitly list the binding files to avoid GLOB picking up deleted files
 pybind11_add_module(qmath 
     src/math_basic/bindings/Main.cpp
     src/math_basic/bindings/PyVec.cpp
@@ -30,7 +28,9 @@ pybind11_add_module(qmath
     src/math_basic/bindings/PyQuantum.cpp
 )
 
+# CRITICAL: Add the root src/math_basic directory so "math/3d/..." includes resolve!
 target_include_directories(qmath PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/math_basic
     src/math_basic/core 
     src/math_basic/math/3d 
     src/math_basic/math/color 
