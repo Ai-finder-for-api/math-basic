@@ -7,12 +7,13 @@
 #include "../math/linalg/Inv.hpp"
 #include "../math/linalg/Det.hpp"
 #include "../math/linalg/Eigen.hpp"
+#include "../math/linalg/Solve.hpp"
+#include "../math/linalg/SVD.hpp"
 
 namespace py = pybind11;
 using namespace qmath;
 
 void init_matrix(py::module_ &m) {
-    // 4x4 Matrix
     py::class_<Mat4f>(m, "Mat4")
         .def(py::init<>())
         .def(py::init<float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float>())
@@ -29,14 +30,12 @@ void init_matrix(py::module_ &m) {
         .def_static("perspective", &Mat4f::perspective)
         .def_static("ortho", &Mat4f::ortho);
 
-    // 3x3 Matrix
     py::class_<Mat3f>(m, "Mat3")
         .def(py::init<>())
         .def("__mul__", &Mat3f::operator*, py::is_operator())
         .def("determinant", &Mat3f::determinant)
         .def("inverse", &Mat3f::inverse);
 
-    // Quaternion
     py::class_<Quatf>(m, "Quat")
         .def(py::init<>())
         .def(py::init<float, float, float, float>())
@@ -51,7 +50,6 @@ void init_matrix(py::module_ &m) {
         .def_static("from_euler", &Quatf::from_euler)
         .def_static("slerp", &Quatf::slerp);
 
-    // Dynamic Matrix (linalg)
     py::class_<DMatrix<float>>(m, "DMatrix")
         .def(py::init<size_t, size_t>())
         .def("__call__", &DMatrix<float>::operator())
@@ -60,10 +58,10 @@ void init_matrix(py::module_ &m) {
         .def("transposed", &DMatrix<float>::transposed)
         .def("__mul__", &DMatrix<float>::operator*, py::is_operator());
 
-    // Linear Algebra Free Functions
     m.def("lu_decompose", &lu_decompose<float>);
     m.def("solve", &solve<float>);
     m.def("inverse", &inverse<float>);
     m.def("determinant", &determinant<float>);
     m.def("jacobi_eigen", &jacobi_eigen<float>);
+    m.def("svd_jacobi", &svd_jacobi<float>);
 }

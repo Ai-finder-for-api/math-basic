@@ -1,28 +1,21 @@
 /**
  * @file Mat4.hpp
  * @brief A comprehensive C++ implementation of a 4x4 Matrix.
- * 
- * The core of 3D graphics and physics engines. Supports homogeneous
- * coordinates, full affine transformations, camera projections,
- * determinants, and inverses.
  */
 #pragma once
 #include "../core/Utils.hpp"
 #include "../core/Constants.hpp"
 #include "Vec3.hpp"
 #include "Vec4.hpp"
+#include "Mat3.hpp"
 #include <cmath>
 
 namespace qmath {
 
 template<typename T>
 struct Mat4 {
-    // Row-major storage: m[row][col]
     T m[4][4];
 
-    // ---------------------------------------------------------
-    // Constructors
-    // ---------------------------------------------------------
     Mat4() { 
         for(int i=0; i<4; ++i) 
             for(int j=0; j<4; ++j) 
@@ -39,34 +32,9 @@ struct Mat4 {
         m[3][0]=m30; m[3][1]=m31; m[3][2]=m32; m[3][3]=m33;
     }
 
-    // ---------------------------------------------------------
-    // Unary Operators
-    // ---------------------------------------------------------
-    Mat4 operator+() const { return *this; }
-    Mat4 operator-() const {
-        Mat4 r;
-        for(int i=0; i<4; ++i)
-            for(int j=0; j<4; ++j)
-                r.m[i][j] = -m[i][j];
-        return r;
-    }
-
-    // ---------------------------------------------------------
-    // Binary Arithmetic Operators (Mat4 + Mat4)
-    // ---------------------------------------------------------
     Mat4 operator+(const Mat4& o) const {
         Mat4 r;
-        for(int i=0; i<4; ++i)
-            for(int j=0; j<4; ++j)
-                r.m[i][j] = m[i][j] + o.m[i][j];
-        return r;
-    }
-
-    Mat4 operator-(const Mat4& o) const {
-        Mat4 r;
-        for(int i=0; i<4; ++i)
-            for(int j=0; j<4; ++j)
-                r.m[i][j] = m[i][j] - o.m[i][j];
+        for(int i=0; i<4; ++i) for(int j=0; j<4; ++j) r.m[i][j] = m[i][j] + o.m[i][j];
         return r;
     }
 
@@ -80,28 +48,6 @@ struct Mat4 {
         return r;
     }
 
-    // ---------------------------------------------------------
-    // Binary Arithmetic Operators (Mat4 + Scalar)
-    // ---------------------------------------------------------
-    Mat4 operator+(T s) const {
-        Mat4 r;
-        for(int i=0; i<4; ++i)
-            for(int j=0; j<4; ++j)
-                r.m[i][j] = m[i][j] + s;
-        return r;
-    }
-
-    Mat4 operator*(T s) const {
-        Mat4 r;
-        for(int i=0; i<4; ++i)
-            for(int j=0; j<4; ++j)
-                r.m[i][j] = m[i][j] * s;
-        return r;
-    }
-
-    // ---------------------------------------------------------
-    // Matrix-Vector Multiplication
-    // ---------------------------------------------------------
     Vec4<T> operator*(const Vec4<T>& v) const {
         return Vec4<T>(
             m[0][0]*v.x + m[0][1]*v.y + m[0][2]*v.z + m[0][3]*v.w,
@@ -124,18 +70,6 @@ struct Mat4 {
         return Vec3<T>(r.x, r.y, r.z);
     }
 
-    // ---------------------------------------------------------
-    // Assignment Operators
-    // ---------------------------------------------------------
-    Mat4& operator+=(const Mat4& o) { *this = *this + o; return *this; }
-    Mat4& operator-=(const Mat4& o) { *this = *this - o; return *this; }
-    Mat4& operator*=(const Mat4& o) { *this = *this * o; return *this; }
-    Mat4& operator+=(T s) { *this = *this + s; return *this; }
-    Mat4& operator*=(T s) { *this = *this * s; return *this; }
-
-    // ---------------------------------------------------------
-    // Matrix Properties
-    // ---------------------------------------------------------
     Mat4 transposed() const {
         return Mat4(
             m[0][0], m[1][0], m[2][0], m[3][0],
@@ -145,9 +79,7 @@ struct Mat4 {
         );
     }
 
-    // Determinant calculation for 4x4 matrix
     T determinant() const {
-        // Using Laplace expansion along the first row
         T det = 0;
         det += m[0][0] * Mat3<T>(
             m[1][1], m[1][2], m[1][3],
@@ -176,9 +108,6 @@ struct Mat4 {
         return det;
     }
 
-    // ---------------------------------------------------------
-    // Transformation Builders
-    // ---------------------------------------------------------
     static Mat4 identity() { return Mat4(); }
 
     static Mat4 translation(T x, T y, T z) {
@@ -189,20 +118,12 @@ struct Mat4 {
         return r;
     }
 
-    static Mat4 translation(const Vec3<T>& v) {
-        return translation(v.x, v.y, v.z);
-    }
-
     static Mat4 scaling(T x, T y, T z) {
         Mat4 r = identity();
         r.m[0][0] = x;
         r.m[1][1] = y;
         r.m[2][2] = z;
         return r;
-    }
-
-    static Mat4 scaling(const Vec3<T>& v) {
-        return scaling(v.x, v.y, v.z);
     }
 
     static Mat4 rotation_x(T angle_rad) {
@@ -232,11 +153,10 @@ struct Mat4 {
         return r;
     }
 
-    // Right-handed look-at matrix (OpenGL style)
     static Mat4 look_at(const Vec3<T>& eye, const Vec3<T>& center, const Vec3<T>& up) {
-        Vec3<T> f = (center - eye).normalized(); // Forward
-        Vec3<T> s = f.cross(up).normalized();    // Right
-        Vec3<T> u = s.cross(f);                  // True Up
+        Vec3<T> f = (center - eye).normalized();
+        Vec3<T> s = f.cross(up).normalized();
+        Vec3<T> u = s.cross(f);
 
         return Mat4(
              s.x,  s.y,  s.z, -s.dot(eye),
@@ -246,7 +166,6 @@ struct Mat4 {
         );
     }
 
-    // Right-handed perspective projection matrix (OpenGL style)
     static Mat4 perspective(T fovy_rad, T aspect, T z_near, T z_far) {
         T f = static_cast<T>(1) / std::tan(fovy_rad / static_cast<T>(2));
         T range_inv = static_cast<T>(1) / (z_near - z_far);
@@ -259,7 +178,6 @@ struct Mat4 {
         );
     }
 
-    // Right-handed orthographic projection matrix (OpenGL style)
     static Mat4 ortho(T left, T right, T bottom, T top, T z_near, T z_far) {
         T rl = static_cast<T>(1) / (right - left);
         T tb = static_cast<T>(1) / (top - bottom);
@@ -274,7 +192,6 @@ struct Mat4 {
     }
 };
 
-// Type Aliases
 using Mat4f = Mat4<float>;
 using Mat4d = Mat4<double>;
 
