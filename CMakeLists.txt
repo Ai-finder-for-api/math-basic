@@ -18,12 +18,8 @@ else()
     add_compile_options(-O3)
 endif()
 
-pybind11_add_module(qmath 
-    src/math_basic/bindings/Main.cpp
-    src/math_basic/bindings/PyVec.cpp
-    src/math_basic/bindings/PyMatrix.cpp
-    src/math_basic/bindings/PyQuantum.cpp
-)
+file(GLOB QMATH_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/math_basic/bindings/*.cpp")
 
-target_include_directories(qmath PRIVATE src/math_basic/core)
+pybind11_add_module(qmath ${QMATH_SOURCES})
+target_include_directories(qmath PRIVATE src/math_basic/core src/math_basic/math/3d src/math_basic/math/color src/math_basic/math/quantum src/math_basic/math/linalg src/math_basic/math/random)
 install(TARGETS qmath DESTINATION math_basic)
