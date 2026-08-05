@@ -4,21 +4,18 @@ project(qmath LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(FetchContent)
-FetchContent_Declare(
-    pybind11
-    GIT_REPOSITORY https://github.com/pybind/pybind11.git
-    GIT_TAG v2.12.0
-)
-FetchContent_MakeAvailable(pybind11)
+# Use the pybind11 already installed by pip/build requirements
+find_package(pybind11 CONFIG REQUIRED)
 
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64|amd64|AMD64|i386|i686)")
-    add_compile_options(-msse4.2 -O3)
-else()
-    add_compile_options(-O3)
+# Compiler-specific flags (MSVC does not understand -O3 or -msse4.2)
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64|amd64|AMD64|i386|i686)")
+        add_compile_options(-msse4.2)
+    endif()
+    add_compile_options(-O3 -Wno-error)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    add_compile_options(/O2 /W3 /WX-)
 endif()
-
-add_compile_options(-Wno-error)
 
 pybind11_add_module(qmath 
     src/math_basic/bindings/Main.cpp
@@ -28,7 +25,6 @@ pybind11_add_module(qmath
     src/math_basic/bindings/PyQuantum.cpp
 )
 
-# CRITICAL: Add the root src/math_basic directory so "math/3d/..." includes resolve!
 target_include_directories(qmath PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/math_basic
     src/math_basic/core 
@@ -48,4 +44,5 @@ target_include_directories(qmath PRIVATE
     src/math_basic/math/graph
     src/math_basic/math/compression
 )
+
 install(TARGETS qmath DESTINATION math_basic)
